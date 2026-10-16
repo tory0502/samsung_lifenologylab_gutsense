@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">GutSense</string>
+    <string name="title_activity_main">GutSense</string>
+    <string name="package_name">com.gutsense.app</string>
+    <string name="custom_url_scheme">com.gutsense.app</string>
+</resources>

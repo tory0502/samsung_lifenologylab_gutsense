@@ -1,0 +1,8 @@
+{
+    "appId":  "com.gutsense.app",
+    "webDir":  "www3",
+    "appName":  "GutSense",
+    "android":  {
+                    "allowMixedContent":  false
+                }
+}

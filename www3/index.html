@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#050B18">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="GutSense">
+<meta name="application-name" content="GutSense">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="assets/img/icon-192.png">
+<link rel="icon" type="image/png" href="assets/img/icon-512.png">
+<title>GutSense · 장 생태계 디지털 트윈</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jua&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  :root{
+    --bg0:#050B18; --bg1:#0A1730; --bg2:#0E2244;
+    --ink:#EAF3FF; --ink-dim:#9DB4D6; --ink-faint:#5E7AA6;
+    --cyan:#37C7FF; --cyan2:#7ADCFF; --teal:#1FB8C9;
+    --green:#27D89B; --lime:#9BE15B;
+    --purple:#A98CFF; --violet:#7B61FF;
+    --amber:#FFC44D; --orange:#FF8A4D;
+    --red:#FF5C7A; --pink:#FF80B0;
+    --line:rgba(122,220,255,.16); --glass:rgba(16,34,68,.55);
+  }
+  html,body{height:100%;overscroll-behavior:none;font-family:'Jua','Apple SD Gothic Neo',sans-serif;color:var(--ink);-webkit-font-smoothing:antialiased}
+  body{background:radial-gradient(120% 80% at 50% -10%,#0E2244 0%,#070E22 55%,#040814 100%);display:flex;align-items:center;justify-content:center;min-height:100vh}
+
+  /* ===== App device frame ===== */
+  .app{position:relative;width:100%;max-width:430px;height:100vh;max-height:932px;overflow:hidden;
+    background:
+      radial-gradient(130% 60% at 50% 0%,rgba(55,199,255,.10),transparent 60%),
+      radial-gradient(120% 50% at 50% 100%,rgba(169,140,255,.08),transparent 60%),
+      linear-gradient(180deg,#091632 0%,#060D20 100%);
+    box-shadow:0 0 0 1px rgba(122,220,255,.08),0 40px 120px rgba(0,0,0,.6)}
+  @media(max-width:480px){.app{max-width:100%;max-height:100%;border-radius:0}}
+
+  /* living nebula backdrop (CSS only) */
+  .app::before{content:"";position:absolute;inset:-20%;z-index:0;pointer-events:none;
+    background:
+      radial-gradient(40% 30% at 20% 25%,rgba(55,199,255,.16),transparent 60%),
+      radial-gradient(35% 28% at 82% 70%,rgba(169,140,255,.14),transparent 60%),
+      radial-gradient(30% 24% at 60% 40%,rgba(39,216,155,.10),transparent 60%);
+    filter:blur(20px);animation:nebula 22s ease-in-out infinite alternate}
+  @keyframes nebula{0%{transform:translate3d(0,0,0) scale(1)}100%{transform:translate3d(0,-3%,0) scale(1.08)}}
+
+  #root{position:relative;z-index:1;flex:1;min-height:0;display:flex;flex-direction:column;height:100%}
+  .screen{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;position:relative;scrollbar-width:none}
+  .screen::-webkit-scrollbar{display:none}
+  .pad{padding:calc(env(safe-area-inset-top,0px) + 58px) 16px calc(env(safe-area-inset-bottom,0px) + 16px)}
+
+  /* ===== Organic "organ panel" — the anti-box. Irregular radius + glow edge ===== */
+  .panel{position:relative;background:linear-gradient(160deg,rgba(20,40,78,.66),rgba(10,22,48,.62));
+    border:1px solid rgba(122,220,255,.14);border-radius:26px 30px 24px 28px;
+    box-shadow:0 16px 40px rgba(0,0,0,.36),inset 0 1px 0 rgba(255,255,255,.06),inset 0 0 0 1px rgba(122,220,255,.04);
+    backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
+  .panel::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+    background:linear-gradient(135deg,rgba(55,199,255,.10) 0%,transparent 38%,transparent 62%,rgba(169,140,255,.09) 100%)}
+  .panel > *{position:relative;z-index:1}
+  .panel.tight{border-radius:20px 22px 20px 22px}
+  .panel.glow{box-shadow:0 0 0 1px rgba(55,199,255,.3),0 0 30px rgba(55,199,255,.28),0 16px 40px rgba(0,0,0,.36)}
+
+  /* metric "creature" bars */
+  .mbar{margin-bottom:9px}
+  .mbar .mhead{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px}
+  .mbar .mlabel{font-size:12px;color:var(--ink);font-weight:400}
+  .mbar .mval{font-family:'Orbitron',monospace;font-weight:700;font-size:14px;font-variant-numeric:tabular-nums}
+  .segs{display:flex;gap:2px;height:11px}
+  .segs i{flex:1;border-radius:3px;background:rgba(122,220,255,.12);transition:background .4s,transform .3s;transform-origin:left}
+  .segs i.on{box-shadow:0 0 8px currentColor}
+
+  /* chip / pill buttons */
+  .chip{display:inline-flex;align-items:center;gap:5px;padding:8px 13px;border-radius:999px;cursor:pointer;
+    font-size:13px;font-weight:400;color:var(--ink-dim);background:rgba(20,40,78,.5);border:1px solid var(--line);
+    transition:transform .14s,background .2s,border-color .2s;user-select:none}
+  .chip:active{transform:scale(.95)}
+  .chip.on-good{background:rgba(39,216,155,.16);border-color:var(--green);color:#7CF0C0}
+  .chip.on-bad{background:rgba(255,92,122,.16);border-color:var(--red);color:#FF9DB0}
+
+  .btn{display:flex;align-items:center;justify-content:center;gap:7px;width:100%;padding:15px;border:none;cursor:pointer;
+    border-radius:18px;font-family:inherit;font-size:15px;font-weight:400;color:#04101F;
+    background:linear-gradient(135deg,var(--cyan),var(--cyan2));box-shadow:0 12px 30px rgba(55,199,255,.36),inset 0 1px 0 rgba(255,255,255,.4);transition:transform .14s}
+  .btn:active{transform:scale(.98)}
+  .btn.ghost{background:rgba(20,40,78,.5);color:var(--ink);border:1px solid var(--line);box-shadow:none}
+  .btn.violet{background:linear-gradient(135deg,var(--violet),var(--purple));box-shadow:0 12px 30px rgba(123,97,255,.4),inset 0 1px 0 rgba(255,255,255,.4);color:#fff}
+  .btn.danger{background:linear-gradient(135deg,var(--red),var(--orange));color:#fff;box-shadow:0 12px 30px rgba(255,92,122,.36)}
+
+  .field{width:100%;padding:14px 16px;background:rgba(8,18,40,.7);border:1px solid var(--line);border-radius:16px;color:var(--ink);
+    font-family:inherit;font-size:14px;outline:none;transition:border-color .2s,box-shadow .2s}
+  .field:focus{border-color:var(--cyan);box-shadow:0 0 0 3px rgba(55,199,255,.16)}
+  .field::placeholder{color:var(--ink-faint)}
+
+  /* toast + modal */
+  #toast{position:absolute;left:50%;bottom:96px;transform:translateX(-50%) translateY(8px);z-index:120;
+    background:linear-gradient(135deg,rgba(20,40,78,.95),rgba(10,22,48,.95));color:var(--ink);border:1px solid var(--line);
+    padding:11px 18px;border-radius:999px;font-size:13px;font-weight:400;box-shadow:0 12px 30px rgba(0,0,0,.4);
+    opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;max-width:88%;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  #modal{position:absolute;inset:0;z-index:140;display:none;align-items:flex-end;justify-content:center}
+  #modal.show{display:flex}
+  #modal .backdrop{position:absolute;inset:0;background:rgba(4,10,22,.6);backdrop-filter:blur(6px)}
+  #modal .sheet{position:relative;width:100%;max-width:430px;max-height:84vh;overflow-y:auto;
+    background:linear-gradient(180deg,rgba(20,40,78,.96),rgba(10,22,48,.97));border:1px solid var(--line);
+    border-radius:28px 28px 0 0;padding:18px 18px calc(env(safe-area-inset-bottom,0px) + 22px);box-shadow:0 -10px 40px rgba(0,0,0,.5);animation:sheetUp .3s cubic-bezier(.22,1,.36,1)}
+  @keyframes sheetUp{from{transform:translateY(40px);opacity:.5}to{transform:translateY(0);opacity:1}}
+
+  .stage-tag{display:inline-flex;align-items:center;gap:6px;font-size:10px;font-weight:400;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--cyan);background:rgba(55,199,255,.12);padding:4px 10px;border-radius:999px}
+  .h1{font-size:22px;font-weight:400;letter-spacing:-.5px;line-height:1.2}
+  .h2{font-size:16px;font-weight:400}
+  .cap{font-size:11px;color:var(--ink-dim);line-height:1.55}
+  .micro{font-size:9px;color:var(--ink-faint);letter-spacing:.06em}
+  .num{font-family:'Orbitron',monospace;font-weight:700;font-variant-numeric:tabular-nums}
+
+  @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+  @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.7;transform:scale(1.06)}}
+  @keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
+  @keyframes gs-shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+  @keyframes gs-stripes{to{background-position:28px 0}}
+  @keyframes gs-twinkle{0%,100%{opacity:1;transform:scale(1) rotate(0deg)}50%{opacity:.35;transform:scale(.75) rotate(20deg)}}
+  @keyframes gs-crossBounce{0%,100%{transform:translateX(-50%) translateY(0) scale(1)}35%{transform:translateX(-50%) translateY(-26%) scale(1.06) rotate(6deg)}70%{transform:translateX(-50%) translateY(-4%) scale(.97) rotate(-4deg)}}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes gs-charge{0%{filter:brightness(1)}40%{filter:brightness(2.6) saturate(.2) drop-shadow(0 0 26px #fff)}100%{filter:brightness(1.7) drop-shadow(0 0 16px #fff)}}
+  .gs-lab-charge{animation:gs-charge .55s ease-out both}
+  @keyframes bellPulse{0%,100%{box-shadow:0 8px 22px rgba(0,0,0,.36),0 0 0 0 rgba(255,92,122,.5)}50%{box-shadow:0 8px 22px rgba(0,0,0,.36),0 0 0 8px rgba(255,92,122,0)}}
+  .fadeIn{animation:fadeIn .35s ease both}
+  .float{animation:float 3.4s ease-in-out infinite}
+  .screen{scrollbar-width:none}
+  .screen ::-webkit-scrollbar{display:none}
+
+  /* fade scrim at top/bottom of scroll for depth */
+  .screen::before,.screen::after{content:"";position:sticky;left:0;right:0;display:block;height:0;z-index:5;pointer-events:none}
+</style>
+</head>
+<body>
+<div class="app">
+  <div id="root"><div style="display:flex;align-items:center;justify-content:center;height:100%"><div style="width:34px;height:34px;border:3px solid rgba(122,220,255,.22);border-top-color:#7ADCFF;border-radius:50%;animation:spin .8s linear infinite"></div></div></div>
+  <div id="toast"></div>
+  <div id="modal"></div>
+</div>
+
+<script src="vendor/three.min.js"></script>
+<script src="vendor/gsap.min.js"></script>
+<script src="vendor/confetti.min.js"></script>
+<script src="config.js"></script>
+<script src="js/data.js?v=11"></script>
+<script src="js/gutmetrics.js?v=1"></script>
+<script src="js/medical.js?v=1"></script>
+<script src="js/chars.js?v=18"></script>
+<script src="js/store.js?v=11"></script>
+<script src="js/engine.js?v=2"></script>
+<script src="js/fx.js?v=1"></script>
+<script src="js/effects.js?v=1"></script>
+<script src="js/ui.js?v=9"></script>
+<script src="js/llm.js?v=6"></script>
+<script src="js/drjang.js?v=6"></script>
+<script src="js/story.js?v=3"></script>
+<script src="js/sim.js?v=16"></script>
+<script src="js/nav.js?v=9"></script>
+<script src="js/screens/login.js?v=2"></script>
+<script src="js/screens/home.js?v=20"></script>
+<script src="js/screens/gutmap.js?v=33"></script>
+<script src="js/screens/diet.js?v=16"></script>
+<script src="js/screens/endoscope.js?v=15"></script>
+<script src="js/screens/quest.js?v=16"></script>
+<script src="js/screens/alert.js?v=6"></script>
+<script src="js/screens/profile.js?v=8"></script>
+<script src="js/screens/secretlab.js?v=15"></script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('sw.js').catch(function () {});
+  });
+}
+window.addEventListener('load', function(){
+  // intro boot once
+  if (window.GS && window.GS.store && !window.GS.store.intro.seen()) {
+    var b = document.createElement('div');
+    b.style.cssText = 'position:absolute;inset:0;z-index:200;display:flex;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 40%,#0A1730,#040814);transition:opacity .6s';
+    b.innerHTML = '<div style="font-size:40px;font-weight:400;letter-spacing:-1px;color:#fff;text-shadow:0 0 24px rgba(55,199,255,.7)">GutSense<span style="color:var(--cyan)">.</span></div>'
+      + '<div style="margin-top:14px;width:34px;height:34px;border:3px solid rgba(122,220,255,.2);border-top-color:var(--cyan);border-radius:50%;animation:spin .9s linear infinite"></div>'
+      + '<div style="font-size:11px;color:var(--ink-faint);margin-top:14px;letter-spacing:.12em">장 생태계 디지털 트윈 부팅…</div>';
+    document.querySelector('.app').appendChild(b);
+    var done=false; function enter(){ if(done) return; done=true; b.style.opacity='0'; setTimeout(function(){ if(b.parentNode) b.parentNode.removeChild(b); },600); window.GS.store.intro.mark(); window.GS.nav.boot(); }
+    setTimeout(enter, 2100);
+    b.addEventListener('click', enter);
+  } else if (window.GS && window.GS.nav) { window.GS.nav.boot(); }
+});
+</script>
+</body>
+</html>

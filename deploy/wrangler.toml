@@ -1,0 +1,13 @@
+# GutSense LLM Proxy Worker 설정
+# 배포: deploy 폴더에서 `npx wrangler deploy`
+name = "gutsense-llm"
+main = "worker.js"
+compatibility_date = "2024-12-01"
+
+# 허용 Origin 제한 (production Pages + 로컬 개발).
+# curl 테스트 시 -H "Origin: https://gutsense-e5m.pages.dev" 필요.
+[vars]
+ALLOWED_ORIGINS = "https://gutsense-e5m.pages.dev,https://develop.gutsense-e5m.pages.dev,http://localhost:8000,http://127.0.0.1:8000"
+
+# 시크릿은 파일에 두지 말 것:
+#   npx wrangler secret put ZAI_API_KEY

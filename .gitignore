@@ -1,0 +1,24 @@
+# === GutSense 게임 — 시연용 비밀 키 (절대 커밋 금지) ===
+# LLM API 키가 들어가는 파일. 절대 git commit/push 하지 마세요.
+www2/config.js
+www2/js/llm.js 는 키를 저장하지 않음 (config.js에서만 읽음)
+
+# === OpenCode / 런타임 ===
+.omo/
+.codegraph/
+node_modules/
+
+# === OS / 에디터 ===
+.DS_Store
+Thumbs.db
+*.log
+
+# GutSense LLM keys ? never commit
+www/config.js
+config.js
+deploy/.dev.vars
+
+# 용량 큰 폴더 (업로드 제외)
+/video/
+/backup/
+/.playwright-mcp/
